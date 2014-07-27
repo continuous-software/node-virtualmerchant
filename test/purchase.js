@@ -4,9 +4,9 @@ var should = require('should');
 var MyVirtualMerchant = require('../.');
 
 var gateway = new MyVirtualMerchant({
-  merchant_id: '531461',
-  user_id: 'Kevin',
-  ssl_pin: '6Z5396',
+  merchant_id: '', // your merchant_id
+  user_id: '', // your user_id
+  ssl_pin: '', // your ssl_ping
   test_mode: false
 });
 
