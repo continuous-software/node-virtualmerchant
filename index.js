@@ -45,10 +45,14 @@ MyVirtualMerchant.prototype.processRequest = function (request, callback) {
       })
     }
   }, function (error, response, body) {
-    var result = JSON.parse(xml2json.toJson(body)).txn;
-    if (result.error)
+    try {
+      var result = JSON.parse(xml2json.toJson(body)).txn;
+      if (result.errorMessage)
+        return callback && callback(result);
+      return callback && callback(error, result);
+    } catch (e) {
       return callback && callback(result);
-    return callback && callback(error, result);
+    }
   });
 };
 
