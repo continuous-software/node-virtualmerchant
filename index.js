@@ -56,15 +56,21 @@ MyVirtualMerchant.prototype.processRequest = function (request, callback) {
   });
 };
 
-MyVirtualMerchant.prototype.doPurchase = function (data, callback) {
+MyVirtualMerchant.prototype.doPurchase = function (order, prospect, creditcard, callback) {
   this.processRequest({
     ssl_transaction_type: 'ccsale',
-    ssl_card_number: data.card_number,
-    ssl_avs_address: 7300,
-    ssl_avs_zip: 12345,
-    ssl_exp_date: data.exp_date,
-    ssl_cvv2cvc2: 123,
-    ssl_amount: data.amount
+    ssl_card_number: creditcard.number.trim().replace(/ /g,''),
+    ssl_exp_date: creditcard.expiration.split(' / ').join(''),
+    ssl_cvv2cvc2_indicator: 1,
+    ssl_customer_code: prospect.id,
+    ssl_cvv2cvc2: creditcard.cvv2,
+    ssl_verify: 'Y',
+    ssl_amount: order.converted_amount,
+    ssl_first_name: prospect.firstname,
+    ssl_last_name: prospect.lastname,
+    ssl_avs_address: prospect.billing.address,
+    ssl_avs_zip: prospect.billing.zipcode,
+    ssl_description: 'React CRM - Prospect #' + prospect.id + ' - Website:' //TODO
   }, callback);
 };
 
