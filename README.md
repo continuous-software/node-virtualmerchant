@@ -1,4 +1,5 @@
-node-virtualmerchant
-====================
+![node-virtualmerchant](http://s28.postimg.org/f1ptqgfot/logo.png)
 
-SDK to communicate with the VirtualMerchant Payment Gateway.
+## Installation ##
+
+    npm install -s virtualmerchant
