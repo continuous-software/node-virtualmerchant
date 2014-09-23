@@ -79,6 +79,8 @@ MyVirtualMerchant.prototype.doPurchase = function (order, prospect, creditcard, 
             query.ssl_avs_address = prospect.billing.adress;
             query.ssl_avs_zip = prospect.billing.zipcode;
             query.ssl_city = prospect.billing.city;
+            query.ssl_zip = prospect.billing.zipcode;
+            query.ssl_state = prospect.billing.region;
             query.ssl_country = prospect.billing.country;
         }
     }
