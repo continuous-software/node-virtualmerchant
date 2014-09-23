@@ -72,10 +72,14 @@ MyVirtualMerchant.prototype.doPurchase = function (order, prospect, creditcard, 
         query.ssl_customer_code = prospect.id;
         query.ssl_first_name = prospect.firstname;
         query.ssl_last_name = prospect.lastname;
+        query.ssl_email = prospect.email;
+        query.ssl_phone = prospect.phone;
 
         if (prospect.billing) {
             query.ssl_avs_address = prospect.billing.adress;
-            query.ssl_as_zip = prospect.billing.zipcode;
+            query.ssl_avs_zip = prospect.billing.zipcode;
+            query.ssl_city = prospect.billing.city;
+            query.ssl_country = prospect.billing.country;
         }
     }
 
