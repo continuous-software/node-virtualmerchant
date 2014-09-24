@@ -76,7 +76,7 @@ MyVirtualMerchant.prototype.doPurchase = function (order, prospect, creditcard, 
         query.ssl_phone = prospect.phone;
 
         if (prospect.billing) {
-            query.ssl_avs_address = prospect.billing.adress;
+            query.ssl_avs_address = prospect.billing.address;
             query.ssl_avs_zip = prospect.billing.zipcode;
             query.ssl_city = prospect.billing.city;
             query.ssl_zip = prospect.billing.zipcode;
