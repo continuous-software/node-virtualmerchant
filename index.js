@@ -70,7 +70,7 @@ MyVirtualMerchant.prototype.doPurchase = function (order, prospect, creditcard, 
 
     if (creditcard.cvv) {
         query.ssl_cvv2cvc2_indicator = 1;
-        qeury.ssl_cvv2cvc2 = creditcard.cvv;
+        query.ssl_cvv2cvc2 = creditcard.cvv;
     }
 
     if (prospect) {

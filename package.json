@@ -2,7 +2,7 @@
   "author": "Amine Mouafik <amine@mouafik.fr>",
   "name": "virtualmerchant",
   "description": "SDK to communicate with the VirtualMerchant Payment Gateway.",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "index.js",
   "repository": {
     "type": "git",
