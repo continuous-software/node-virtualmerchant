@@ -65,9 +65,14 @@ MyVirtualMerchant.prototype.doPurchase = function (order, prospect, creditcard, 
         ssl_card_number: creditcard.number.trim().replace(/ /g, ''), //a lot of assumptions
         ssl_exp_date: creditcard.expiration.split(' / ').join(''),
         ssl_amount: order.converted_amount,
-        ssl_cvv2cvc2_indicator: 1, //this should not be mandatory
         ssl_verify: 'Y'//this should not be mandatory
     };
+
+    if (creditcard.cvv) {
+        query.ssl_cvv2cvc2_indicator = 1;
+        qeury.ssl_cvv2cvc2 = creditcard.cvv;
+    }
+
     if (prospect) {
         query.ssl_customer_code = prospect.id;
         query.ssl_first_name = prospect.firstname;
