@@ -74,26 +74,11 @@ MyVirtualMerchant.prototype.doPurchase = function (order, prospect, creditcard, 
     }
 
     if (prospect) {
-        query.ssl_customer_code = prospect.id;
-        query.ssl_first_name = prospect.firstname;
-        query.ssl_last_name = prospect.lastname;
-        query.ssl_email = prospect.email;
-        query.ssl_phone = prospect.phone;
-
-        if (prospect.billing) {
-            query.ssl_avs_address = prospect.billing.address;
-            query.ssl_avs_zip = prospect.billing.zipcode;
-            query.ssl_city = prospect.billing.city;
-            query.ssl_zip = prospect.billing.zipcode;
-            query.ssl_state = prospect.billing.region;
-            query.ssl_country = prospect.billing.country;
-        }
+        _.extend(query, prospect);
     }
 
-
     this.processRequest(query, callback);
-}
-;
+};
 
 MyVirtualMerchant.prototype.doRefund = function (data, callback) {
     this.processRequest({
