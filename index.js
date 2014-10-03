@@ -37,7 +37,20 @@ MyVirtualMerchant.prototype.signRequest = function (request) {
     });
 };
 
-MyVirtualMerchant.prototype.processRequest = function (request, callback) {
+MyVirtualMerchant.prototype.processRequest = function (request, rootElement, callback) {
+
+    var root;
+    var cb;
+
+    if (arguments.length === 3) {
+        root = rootElement;
+        cb = callback;
+    } else {
+        root = 'txn';
+        cb = rootElement;
+    }
+
+
     client.post(this.endpoints.process_xml, {
         form: {
             xmldata: json2xml({
@@ -46,12 +59,15 @@ MyVirtualMerchant.prototype.processRequest = function (request, callback) {
         }
     }, function (error, response, body) {
         try {
-            var result = JSON.parse(xml2json.toJson(body)).txn;
-            if (result.errorMessage)
-                return callback && callback(result);
-            return callback && callback(error, result);
+            var parse = JSON.parse(xml2json.toJson(body));
+            var result = parse[root] || parse.txn;
+            if (result.errorMessage) {
+                return cb && cb(result);
+            } else {
+                return cb && cb(error, result);
+            }
         } catch (e) {
-            return callback && callback(result);
+            return cb && cb(result);
         }
     });
 };
