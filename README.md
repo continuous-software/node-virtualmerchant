@@ -4,7 +4,7 @@
 
 ## Installation ##
 
-    npm install -s virtualmerchant
+    $ npm install -s virtualmerchant
 
 ## Usage
 
