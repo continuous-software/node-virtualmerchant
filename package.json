@@ -1,30 +1,33 @@
 {
-  "author": "Amine Mouafik <amine@mouafik.fr>",
+  "author": "Laurent Renard <laurent@continuous.in.th>",
   "name": "virtualmerchant",
-  "description": "SDK to communicate with the VirtualMerchant Payment Gateway.",
-  "version": "0.0.12",
+  "description": "SDK for VirtualMerchant payment gateway.",
+  "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV='test' node ./node_modules/.bin/mocha ./test/ -R spec -t 35000"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/continuous-software/node-virtualmerchant.git"
   },
-  "scripts": {
-    "test": "mocha --reporter spec"
-  },
   "keywords": [
     "virtualmerchant",
     "gateway",
-    "payment"
+    "payment",
+    "42-cent"
   ],
   "license": "MIT",
   "dependencies": {
-    "xml2json": "~0.4.0",
-    "json2xml": "~0.1.1",
-    "request": "~2.36.0",
-    "lodash": "~2.4.1"
+    "42-cent-base": "^0.9.0",
+    "42-cent-util": "^1.0.0",
+    "bluebird": "^2.3.2",
+    "json2xml": "^0.1.1",
+    "request": "^2.47.0",
+    "xml2json": "^0.5.1"
   },
   "devDependencies": {
-    "mocha": "~1.20.1",
-    "should": "~4.0.4"
+    "42-cent-model": "^1.1.1",
+    "mocha": "^1.21.4"
   }
 }
