@@ -388,7 +388,7 @@ describe('Virtual merchant service', function () {
   describe('charge customer profile', function () {
 
 
-    xit('should charge a existing customer', function (done) {
+    it('should charge a existing customer', function (done) {
 
       var random = Math.floor(Math.random() * 1000);
 
@@ -414,7 +414,7 @@ describe('Virtual merchant service', function () {
           return service.chargeCustomer({amount: randomAmount}, {profileId: result.profileId});
         })
         .then(function (res) {
-          assert.equal(res.transactionId, res._original.transId);
+          assert.equal(res.transactionId, res._original.ssl_txn_id);
           assert(res._original, '_original should be defined');
           done();
         })
