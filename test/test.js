@@ -300,7 +300,7 @@ describe('Virtual merchant service', function () {
 
   describe('void a transaction', function () {
 
-    xit('should void a transaction', function (done) {
+    it('should void a transaction', function (done) {
 
       var cc = {
         creditCardNumber: testcc,
@@ -318,6 +318,9 @@ describe('Virtual merchant service', function () {
         .then(function (result) {
           assert(result._original, '_original should be defined');
           done();
+        })
+        .catch(function (err) {
+          console.log(err);
         });
     });
 
@@ -386,7 +389,6 @@ describe('Virtual merchant service', function () {
   });
 
   describe('charge customer profile', function () {
-
 
     it('should charge a existing customer', function (done) {
 
