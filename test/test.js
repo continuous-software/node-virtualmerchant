@@ -160,6 +160,36 @@ describe('Virtual merchant service', function () {
     });
   });
 
+  describe('settle a transaction', function () {
+
+    it('should settle a transaction', function (done) {
+      var cc = {
+        creditCardNumber: testcc,
+        expirationYear: '2017',
+        expirationMonth: '01',
+        cvv: '666'
+      };
+
+      var txnId;
+
+      service.submitTransaction({amount: randomAmount()}, cc).then(function (transaction) {
+        txnId = transaction.transactionId;
+        assert(transaction.transactionId, 'transactionId should be defined');
+        assert(transaction._original, 'original should be defined');
+      })
+        .then(function () {
+          return service.settleTransaction(txnId);
+        })
+        .then(function (res) {
+          assert.equal(res.transactionId, txnId);
+          done();
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    });
+  });
+
   describe('get batch statistics', function () {
 
     var service;
@@ -238,42 +268,21 @@ describe('Virtual merchant service', function () {
 
   describe('refund a transaction', function () {
 
-
-    xit('should refund a transaction', function (done) {
+    it('should refund a transaction', function (done) {
 
       service.getSettledBatchList(new Date(Date.now() - 1000 * 3600 * 24 * 7))
         .then(function (result) {
           return result.filter(function (val) {
-            return val.ssl_trans_status = 'STL';
+            return val.ssl_trans_status === 'STL';
           });
         })
         .then(function (settled) {
+          if (settled.length === 0) {
+            console.log('we need to have settled transaction to test ');
+            done();
+          }
           return service.refundTransaction(settled[0].ssl_txn_id);
         })
-        .then(function (result) {
-          assert.equal(result._original.ssl_result_message, 'APPROVAL');
-          done();
-        })
-        .catch(function (err) {
-          console.log('some error: ' + err);
-        });
-    });
-
-
-    xit('should support partial refund', function (done) {
-      var cc = {
-        creditCardNumber: testcc,
-        expirationYear: '2016',
-        expirationMonth: '01',
-        cvv: '123'
-      };
-
-      var transactionId;
-
-      service.submitTransaction({amount: 100}, cc).then(function (transaction) {
-        transactionId = transaction.transactionId;
-        return service.refundTransaction(transactionId, {amount: '50.00'});
-      })
         .then(function (result) {
           assert.equal(result._original.ssl_result_message, 'APPROVAL');
           done();
