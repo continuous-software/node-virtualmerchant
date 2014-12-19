@@ -21,7 +21,7 @@ describe('Virtual merchant service', function () {
       MERCHANT_ID: '000078',
       USER_ID: 'webpage',
       SSL_PIN: 'ZKN0S1',
-      TEST_MODE: true
+      testMode: true
     });
   });
 
