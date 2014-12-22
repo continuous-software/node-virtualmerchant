@@ -185,12 +185,12 @@ describe('Virtual merchant service', function () {
     it('should get batch statistics', function (done) {
       service.getSettledBatchList(new Date(Date.now() - 1000 * 3600 * 24 * 7))
         .then(function (result) {
-          console.log(result.map(function (val) {
+/*          console.log(result.map(function (val) {
             return {
               status: val.ssl_trans_status,
               result: val.ssl_result_message
             };
-          }));
+          }));*/
           done();
         })
         .catch(function (err) {
@@ -260,7 +260,7 @@ describe('Virtual merchant service', function () {
             console.log('we need to have settled transaction to test ');
             done();
           }
-          return service.refundTransaction(settled[0].ssl_txn_id);
+          return service.refundTransaction(settled[0].ssl_txn_id, prospect);
         })
         .then(function (result) {
           assert.equal(result._original.ssl_result_message, 'APPROVAL');
@@ -299,9 +299,9 @@ describe('Virtual merchant service', function () {
 
       var transId;
 
-      service.submitTransaction({amount: randomAmount()}, cc).then(function (transaction) {
+      service.submitTransaction({amount: randomAmount()}, cc, prospect).then(function (transaction) {
         transId = transaction.transactionId;
-        return service.voidTransaction(transId);
+        return service.voidTransaction(transId, prospect);
       })
         .then(function (result) {
           assert(result._original, '_original should be defined');
@@ -313,7 +313,7 @@ describe('Virtual merchant service', function () {
     });
 
     it('should reject the promise when the gateway returns error', function (done) {
-      service.voidTransaction(666)
+      service.voidTransaction(666, prospect)
         .then(function (res) {
           throw new Error('it should not get here');
         }, function (err) {
@@ -341,7 +341,7 @@ describe('Virtual merchant service', function () {
         email: 'bob@eponge.com'
       };
 
-      service.createCustomerProfile(cc, billing)
+      service.createCustomerProfile(cc, billing, prospect)
         .then(function (result) {
           assert(result.profileId, ' profileId Should be defined');
           assert(result._original, '_original should be defined');
@@ -365,7 +365,7 @@ describe('Virtual merchant service', function () {
         email: 'bob@eponge.com'
       };
 
-      service.createCustomerProfile(cc, billing)
+      service.createCustomerProfile(cc, billing, prospect)
         .then(function (result) {
           throw new Error('it should not get here');
         }, function (err) {
@@ -395,13 +395,13 @@ describe('Virtual merchant service', function () {
         email: random + 'bob@eponge.com'
       };
 
-      service.createCustomerProfile(cc, billing)
+      service.createCustomerProfile(cc, billing, prospect)
         .then(function (result) {
           var randomAmount = Math.floor(Math.random() * 300);
           assert(result.profileId, ' profileId Should be defined');
           assert(result._original, '_original should be defined');
 
-          return service.chargeCustomer({amount: randomAmount}, {profileId: result.profileId});
+          return service.chargeCustomer({amount: randomAmount}, {profileId: result.profileId}, prospect);
         })
         .then(function (res) {
           assert.equal(res.transactionId, res._original.ssl_txn_id);
@@ -414,7 +414,7 @@ describe('Virtual merchant service', function () {
     });
 
     it('should reject the promise when the gateway return an error', function (done) {
-      return service.chargeCustomer({amount: 234}, {profileId: '1234'})
+      return service.chargeCustomer({amount: 234}, {profileId: '1234'}, prospect)
         .then(function () {
           throw new Error('should not get here');
         }, function (err) {
