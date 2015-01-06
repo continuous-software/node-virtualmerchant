@@ -3,7 +3,6 @@
 var VirtualMerchant = require('../index.js');
 var GatewayError = require('42-cent-base').GatewayError;
 var CreditCard = require('42-cent-model').CreditCard;
-var Prospect = require('42-cent-model').Prospect;
 var assert = require('assert');
 
 
@@ -332,7 +331,7 @@ describe('Virtual merchant service', function () {
       var cc = new CreditCard()
         .withCreditCardNumber('4111111111111111')
         .withExpirationMonth('12')
-        .withExpirationYear('2014')
+        .withExpirationYear('2017')
         .withCvv('123');
 
       var billing = {
@@ -386,7 +385,7 @@ describe('Virtual merchant service', function () {
       var cc = new CreditCard()
         .withCreditCardNumber('4111111111111111')
         .withExpirationMonth('12')
-        .withExpirationYear('2014')
+        .withExpirationYear('2017')
         .withCvv('123');
 
       var billing = {
