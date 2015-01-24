@@ -34,7 +34,7 @@ describe('Virtual merchant service', function () {
         expirationMonth: '01',
         cvv: '666'
       };
-      service.submitTransaction({amount: randomAmount()}, cc).then(function (transaction) {
+      service.submitTransaction({amount: 12.42}, cc).then(function (transaction) {
         assert(transaction.transactionId, 'transactionId should be defined');
         assert(transaction._original, 'original should be defined');
         done();
