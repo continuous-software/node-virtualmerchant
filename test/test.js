@@ -450,7 +450,7 @@ describe('Virtual merchant service', function () {
     });
   });
 
-  describe.only('transaction response messages', function () {
+  describe('transaction response messages', function () {
 
     describe('with VISA credit card', function () {
 
