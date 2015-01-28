@@ -1,6 +1,7 @@
 'use strict';
 
-var VirtualMerchant = require('../index.js');
+var VirtualMerchant = require('../index.js').gateway;
+var TestGatewayHelper = require('../index.js').testGatewayHelper;
 var GatewayError = require('42-cent-base').GatewayError;
 var CreditCard = require('42-cent-model').CreditCard;
 var Prospect = require('42-cent-model').Prospect;
@@ -34,7 +35,9 @@ describe('Virtual merchant service', function () {
         expirationMonth: '01',
         cvv: '666'
       };
-      service.submitTransaction({amount: 12.42}, cc).then(function (transaction) {
+      service.submitTransaction({
+        amount: TestGatewayHelper.adjustAmount(randomAmount(), 'visa', 'APPROVAL')
+      }, cc).then(function (transaction) {
         assert(transaction.transactionId, 'transactionId should be defined');
         assert(transaction._original, 'original should be defined');
         done();
