@@ -36,13 +36,13 @@ describe('Virtual merchant service', function () {
         cvv: '666'
       };
       service.submitTransaction({
-        amount: TestGatewayHelper.adjustAmount(randomAmount(), 'visa', 'APPROVAL')
+        amount: randomAmount()
       }, cc).then(function (transaction) {
         assert(transaction.transactionId, 'transactionId should be defined');
         assert(transaction._original, 'original should be defined');
         done();
       }, function (err) {
-        console.log(err);
+        done(err);
       });
     });
 
@@ -449,6 +449,39 @@ describe('Virtual merchant service', function () {
       );
     });
   });
+
+  describe.only('transaction response messages', function () {
+
+    describe('with VISA credit card', function () {
+
+      Object.keys(TestGatewayHelper.responses.visa).forEach(function (expectedResponse) {
+        it('should submit transaction request and get ' + expectedResponse, function (done) {
+          var cc = {
+            creditCardNumber: testcc,
+            expirationYear: '2017',
+            expirationMonth: '01',
+            cvv: '666'
+          };
+          var expected = expectedResponse.replace(/_/g, ' ');
+          service.submitTransaction({
+            amount: TestGatewayHelper.adjustAmount(randomAmount(), 'visa', expectedResponse)
+          }, cc).then(function (transaction) {
+            assert(transaction.transactionId, 'transactionId should be defined');
+            assert(transaction._original, 'original should be defined');
+            assert((transaction._original.ssl_result_message === expected), 'should get ' + expected);
+            done();
+          }, function (transaction) {
+            assert(transaction._original, 'original should be defined');
+            assert((transaction._original.ssl_result_message === expected), 'should get ' + expected);
+            done();
+          });
+        });
+      });
+
+    });
+
+  });
+
 });
 
 
