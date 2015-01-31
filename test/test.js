@@ -149,17 +149,6 @@ describe('Virtual merchant service', function () {
 
   describe('get batch statistics', function () {
 
-    var service;
-
-    beforeEach(function () {
-      service = VirtualMerchant({
-        MERCHANT_ID: '000078',
-        USER_ID: 'webpage',
-        SSL_PIN: 'ZKN0S1',
-        testMode: true
-      });
-    });
-
     it('should get batch statistics', function (done) {
       service.getSettledBatchList(new Date(Date.now() - 1000 * 3600 * 24 * 7))
         .then(function (result) {
