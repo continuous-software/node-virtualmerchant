@@ -44,7 +44,9 @@ var forbiddenCreditCard = new CreditCard()
       .withExpirationYear('2017')
       .withCvv2('123');
 
-describe('Virtual merchant service', function () {
+var defaultExpectedServiceError = 'DECLINED';
+
+describe('VirtualMerchant SDK', function () {
 
   var service;
 
@@ -57,9 +59,9 @@ describe('Virtual merchant service', function () {
     });
   });
 
-  describe('submit transaction', function () {
+  describe('Service', function () {
 
-    it('should submit transaction request', function (done) {
+    it('should submit a transaction', function (done) {
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
       }, creditCard, prospect, extraPaymentFields).then(function (transaction) {
@@ -71,34 +73,7 @@ describe('Virtual merchant service', function () {
       });
     });
 
-    it('should reject the promise when using credit card 5000 3000 2000 3003', function (done) {
-      service.submitTransaction({
-        amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-      }, forbiddenCreditCard, prospect, extraPaymentFields).then(function () {
-        throw new Error('should not get here');
-      }, function (rejection) {
-        assert.equal(rejection, 'usage of this card has been restricted due to its undocumented behavior');
-        done();
-      });
-    });
-
-    xit('should reject the promise when web service send an error code', function (done) {
-      service.submitTransaction({
-        amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'DECLINED')
-      }, creditCard, prospect, extraPaymentFields).then(function () {
-        throw new Error('should not get here');
-      }, function (rejection) {
-        assert.equal(rejection.message, 'The Credit Card Number supplied in the authorization request appears to be invalid.');
-        assert(rejection._original, 'should have the original error from sdk/gateway');
-        done();
-      });
-    });
-
-  });
-
-  describe('authorize transaction', function () {
-
-    it('should authorize transaction request', function (done) {
+    it('should authorize a transaction', function (done) {
 
       service.authorizeTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
@@ -111,23 +86,7 @@ describe('Virtual merchant service', function () {
       });
     });
 
-    xit('should reject the promise when web service send an error code', function (done) {
-      service.authorizeTransaction({
-        amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'DECLINED')
-      }, creditCard, prospect).then(function () {
-        throw new Error('should not get here');
-      }, function (rejection) {
-        assert.equal(rejection.message, 'The Credit Card Number supplied in the authorization request appears to be invalid.');
-        assert(rejection._original, 'should have the original error from sdk/gateway');
-        done();
-      });
-    });
-
-  });
-
-  xdescribe('settle a transaction', function () {
-
-    it('should settle a transaction', function (done) {
+    xit('should settle a transaction', function (done) {
       var transactionId;
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
@@ -145,10 +104,6 @@ describe('Virtual merchant service', function () {
       });
     });
 
-  });
-
-  describe('get batch statistics', function () {
-
     it('should get batch statistics', function (done) {
       service.getSettledBatchList(new Date(Date.now() - 1000 * 3600 * 24 * 7))
         .then(function (result) {
@@ -158,43 +113,6 @@ describe('Virtual merchant service', function () {
           done(err);
         });
     });
-
-    xit('should reject the promise when web service returns an error', function (done) {
-      service.getSettledBatchList(new Date(), new Date(Date.now() - 24 * 1000 * 3600)).then(function (result) {
-        throw new Error('should not get here');
-      }).catch(function (err) {
-        assert.equal(err.message, 'Search dates must be formatted as MM/DD/YYYY, the end date must be greater than the start date and the range cannot be greater than 31 days.', 'it should have the gateway error message');
-        assert(err._original, '_original should be defined');
-        done();
-      });
-
-      xit('should reject the promise when web service send an error code', function (done) {
-        service.submitTransaction({
-          amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'DECLINED')
-        }, creditCard, prospect, extraPaymentFields).then(function () {
-          throw new Error('should not get here');
-        }, function (rejection) {
-          assert.equal(rejection.message, 'The Credit Card Number supplied in the authorization request appears to be invalid.');
-          assert(rejection._original, 'should have the original error from sdk/gateway');
-          done();
-        });
-      });
-
-      it('should reject the promise when using credit card 5000 3000 2000 3003', function (done) {
-        service.submitTransaction({
-          amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-        }, forbiddenCreditCard, prospect, extraPaymentFields).then(function () {
-          throw new Error('should not get here');
-        }, function (rejection) {
-          assert.equal(rejection, 'usage of this card has been restricted due to its undocumented behavior');
-          done();
-        });
-      });
-    });
-
-  });
-
-  describe('refund a transaction', function () {
 
     it('should refund a transaction', function (done) {
 
@@ -219,23 +137,6 @@ describe('Virtual merchant service', function () {
         });
     });
 
-    it('should reject the promise when web service return an error', function (done) {
-      service.refundTransaction('-666')
-        .then(function () {
-          throw new Error('should not get here');
-        })
-        .catch(function (err) {
-          assert(err instanceof GatewayError, 'err should be an instance of GatewayError');
-          assert.equal(err.message, 'The transaction ID is invalid for this transaction type');
-          assert(err._original, 'original should be defined');
-          done();
-        });
-    });
-
-  });
-
-  describe('void a transaction', function () {
-
     it('should void a transaction', function (done) {
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
@@ -249,22 +150,6 @@ describe('Virtual merchant service', function () {
       });
     });
 
-    xit('should reject the promise when the gateway returns error', function (done) {
-      service.voidTransaction(666, prospect)
-        .then(function (res) {
-          throw new Error('it should not get here');
-        }, function (err) {
-          assert(err instanceof GatewayError, 'err should be an instance of GatewayError');
-          assert.equal(err.message, 'The transaction ID is invalid for this transaction type');
-          assert(err._original, 'original should be defined');
-          done();
-        });
-    });
-
-  });
-
-  xdescribe('create customer profile', function () {
-
     it('should create a customer profile', function (done) {
       service.createCustomerProfile(creditCard, prospect)
         .then(function (result) {
@@ -276,26 +161,6 @@ describe('Virtual merchant service', function () {
           done(err);
         });
     });
-
-    xit('should reject the promise when the gateway return an error', function (done) {
-      var billing = {
-        customerFirstName: 'bob',
-        customerLastName: 'leponge',
-        email: 'bob@eponge.com'
-      };
-      service.createCustomerProfile(creditCard, billing)
-        .then(function (result) {
-          throw new Error('it should not get here');
-        }, function (err) {
-          assert(err._original, '_original should be defined');
-          assert.equal(err.message, 'The Credit Card Number supplied in the authorization request appears to be invalid.');
-          done();
-        });
-    });
-
-  });
-
-  xdescribe('charge customer profile', function () {
 
     it('should charge a existing customer', function (done) {
       var random = Math.floor(Math.random() * 1000);
@@ -319,28 +184,122 @@ describe('Virtual merchant service', function () {
         });
     });
 
-    xit('should reject the promise when the gateway return an error', function (done) {
-      return service.chargeCustomer({
-        amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'DECLINED')
-      }, {
-        profileId: '1234'
-      }).then(function () {
-        throw new Error('should not get here');
-      }, function (err) {
-        assert(err._original, '_original should be defined');
-        assert.equal(err.message, 'The token supplied in the authorization request appears to be invalid');
-        done();
+  });
+
+  describe('Promise API error handler', function () {
+
+    describe('should reject the promise when internal rules returns an error on', function () {
+
+      it('submitTransaction transaction using credit card 5000300020003003', function (done) {
+        service.submitTransaction({
+          amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
+        }, forbiddenCreditCard, prospect, extraPaymentFields).then(function () {
+          throw new Error('should not get here');
+        }, function (rejection) {
+          assert.equal(rejection, 'usage of this card has been restricted due to its undocumented behavior');
+          done();
+        });
       });
+
+    });
+
+    describe('should reject the promise when service returns an error on', function () {
+
+      it('rejected submitTransaction', function (done) {
+        service.submitTransaction({
+          amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', defaultExpectedServiceError)
+        }, creditCard, prospect, extraPaymentFields).then(function () {
+          throw new Error('should not get here');
+        }, function (rejection) {
+          assert.equal(rejection.message, defaultExpectedServiceError);
+          assert(rejection._original, 'should have the original error from sdk/gateway');
+          done();
+        });
+      });
+
+      it('authorizeTransaction', function (done) {
+        service.authorizeTransaction({
+          amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', defaultExpectedServiceError)
+        }, creditCard, prospect).then(function () {
+          throw new Error('should not get here');
+        }, function (rejection) {
+          assert.equal(rejection.message, defaultExpectedServiceError);
+          assert(rejection._original, 'should have the original error from sdk/gateway');
+          done();
+        });
+      });
+
+      it('voidTransaction', function (done) {
+        service.voidTransaction(666, prospect)
+          .then(function (res) {
+            throw new Error('it should not get here');
+          }, function (err) {
+            assert(err instanceof GatewayError, 'err should be an instance of GatewayError');
+            assert.equal(err.message, 'The transaction ID is invalid for this transaction type');
+            assert(err._original, 'original should be defined');
+            done();
+          });
+      });
+
+      it('refundTransaction', function (done) {
+        service.refundTransaction('-666')
+          .then(function () {
+            throw new Error('should not get here');
+          })
+          .catch(function (err) {
+            assert(err instanceof GatewayError, 'err should be an instance of GatewayError');
+            assert.equal(err.message, 'The transaction ID is invalid for this transaction type');
+            assert(err._original, 'original should be defined');
+            done();
+          });
+      });
+
+      it('getSettledBatchList', function (done) {
+        service.getSettledBatchList(new Date(), new Date(Date.now() - 24 * 1000 * 3600))
+          .then(function (result) {
+            throw new Error('should not get here');
+          }).catch(function (err) {
+            assert.equal(err.message, 'Search dates must be formatted as MM/DD/YYYY, the end date must be greater than the start date and the range cannot be greater than 31 days.', 'it should have the gateway error message');
+            assert(err._original, '_original should be defined');
+            done();
+          });
+      });
+
+      xit('createCustomerProfile', function (done) {
+        service.createCustomerProfile(creditCard, prospect)
+          .then(function (result) {
+            throw new Error('it should not get here');
+          }, function (err) {
+            assert(err._original, '_original should be defined');
+            assert.equal(err.message, 'The Credit Card Number supplied in the authorization request appears to be invalid.');
+            done();
+          });
+      });
+
+      xit('chargeCustomer', function (done) {
+        return service.chargeCustomer({
+          amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVED')
+        }, {
+          profileId: '1234'
+        }).then(function () {
+          throw new Error('should not get here');
+        }, function (err) {
+          assert(err._original, '_original should be defined');
+          assert.equal(err.message, 'The token supplied in the authorization request appears to be invalid');
+          done();
+        });
+      });
+
     });
 
   });
 
-  describe('transaction response messages', function () {
+  describe('Test Service', function () {
 
     describe('with VISA credit card', function () {
 
       Object.keys(TestGatewayHelper.responses.visa).forEach(function (expectedResponse) {
-        it('should submit transaction request and get ' + expectedResponse, function (done) {
+        it('returns ' + expectedResponse, function (done) {
           var expected = expectedResponse.replace(/_/g, ' ');
           service.submitTransaction({
             amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', expectedResponse)
