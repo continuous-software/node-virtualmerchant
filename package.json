@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "42-cent-model": "^1.1.1",
+    "casual": "^1.4.7",
     "mocha": "^1.21.4"
   }
 }
