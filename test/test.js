@@ -150,7 +150,7 @@ describe('VirtualMerchant SDK', function () {
       });
     });
 
-    it('should create a customer profile', function (done) {
+    xit('should create a customer profile', function (done) {
       service.createCustomerProfile(creditCard, prospect)
         .then(function (result) {
           assert(result.profileId, ' profileId Should be defined');
@@ -162,7 +162,7 @@ describe('VirtualMerchant SDK', function () {
         });
     });
 
-    it('should charge a existing customer', function (done) {
+    xit('should charge a existing customer', function (done) {
       var random = Math.floor(Math.random() * 1000);
       prospect.customerEmail = 'something@else.fr';
       service.createCustomerProfile(creditCard, prospect)
