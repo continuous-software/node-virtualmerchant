@@ -8,6 +8,10 @@ var Prospect = require('42-cent-model').Prospect;
 var assert = require('assert');
 var casual = require('casual');
 
+var extraPaymentFields = {
+  description: 'continuous-software/node-virtualmerchant - npm test'
+};
+
 var prospect = new Prospect()
       .withBillingFirstName(casual.first_name)
       .withBillingLastName(casual.last_name)
@@ -58,7 +62,7 @@ describe('Virtual merchant service', function () {
     it('should submit transaction request', function (done) {
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-      }, creditCard, prospect).then(function (transaction) {
+      }, creditCard, prospect, extraPaymentFields).then(function (transaction) {
         assert(transaction.transactionId, 'transactionId should be defined');
         assert(transaction._original, 'original should be defined');
         done();
@@ -70,7 +74,7 @@ describe('Virtual merchant service', function () {
     it('should reject the promise when using credit card 5000 3000 2000 3003', function (done) {
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-      }, forbiddenCreditCard, prospect).then(function () {
+      }, forbiddenCreditCard, prospect, extraPaymentFields).then(function () {
         throw new Error('should not get here');
       }, function (rejection) {
         assert.equal(rejection, 'usage of this card has been restricted due to its undocumented behavior');
@@ -81,7 +85,7 @@ describe('Virtual merchant service', function () {
     xit('should reject the promise when web service send an error code', function (done) {
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'DECLINED')
-      }, creditCard, prospect).then(function () {
+      }, creditCard, prospect, extraPaymentFields).then(function () {
         throw new Error('should not get here');
       }, function (rejection) {
         assert.equal(rejection.message, 'The Credit Card Number supplied in the authorization request appears to be invalid.');
@@ -127,7 +131,7 @@ describe('Virtual merchant service', function () {
       var transactionId;
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-      }, creditCard, prospect).then(function (transaction) {
+      }, creditCard, prospect, extraPaymentFields).then(function (transaction) {
         transactionId = transaction.transactionId;
         assert(transaction.transactionId, 'transactionId should be defined');
         assert(transaction._original, 'original should be defined');
@@ -178,7 +182,7 @@ describe('Virtual merchant service', function () {
       xit('should reject the promise when web service send an error code', function (done) {
         service.submitTransaction({
           amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'DECLINED')
-        }, creditCard, prospect).then(function () {
+        }, creditCard, prospect, extraPaymentFields).then(function () {
           throw new Error('should not get here');
         }, function (rejection) {
           assert.equal(rejection.message, 'The Credit Card Number supplied in the authorization request appears to be invalid.');
@@ -190,7 +194,7 @@ describe('Virtual merchant service', function () {
       it('should reject the promise when using credit card 5000 3000 2000 3003', function (done) {
         service.submitTransaction({
           amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-        }, forbiddenCreditCard, prospect).then(function () {
+        }, forbiddenCreditCard, prospect, extraPaymentFields).then(function () {
           throw new Error('should not get here');
         }, function (rejection) {
           assert.equal(rejection, 'usage of this card has been restricted due to its undocumented behavior');
@@ -246,7 +250,7 @@ describe('Virtual merchant service', function () {
     it('should void a transaction', function (done) {
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-      }, creditCard, prospect).then(function (transaction) {
+      }, creditCard, prospect, extraPaymentFields).then(function (transaction) {
         return service.voidTransaction(transaction.transactionId, prospect);
       }).then(function (result) {
         assert(result._original, '_original should be defined');
@@ -351,7 +355,7 @@ describe('Virtual merchant service', function () {
           var expected = expectedResponse.replace(/_/g, ' ');
           service.submitTransaction({
             amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', expectedResponse)
-          }, creditCard, prospect).then(function (transaction) {
+          }, creditCard, prospect, extraPaymentFields).then(function (transaction) {
             assert(transaction.transactionId, 'transactionId should be defined');
             assert(transaction._original, 'original should be defined');
             assert((transaction._original.ssl_result_message === expected), 'should get ' + expected);
