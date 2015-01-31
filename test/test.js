@@ -8,22 +8,24 @@ var Prospect = require('42-cent-model').Prospect;
 var assert = require('assert');
 
 var prospect = new Prospect({
-  customerFirstName: 'bob',
-  customerLastName: 'leponge',
-  customerEmail: 'bob@leponge.fr',
-  customerPhone: '0660296818',
-  billingAddress: '42A 2T WTC',
+  billingFirstName: 'bob',
+  billingLastName: 'leponge',
+  billingEmailAddress: 'bob@leponge.fr',
+  billingPhone: '0660296818',
+  billingAddress1: '42A 2T WTC',
+  billingAddress2: '42A 2T WTC',
   billingCity: 'New York',
   billingState: 'New York',
-  billingZip: '3212',
+  billingPostalCode: '3212',
   billingCountry: 'US',
   shippingFirstName: 'George',
   shippingLastName: 'Bush',
-  shippingAddress: '42A 2T WTC',
+  shippingAddress1: '42A 2T WTC',
+  shippingAddress2: 'what',
   shippingCity: 'New York',
   shippingState: 'New York',
-  shippingZip: '3212',
-  ShippingCountry: 'US'
+  shippingPostalCode: '3212',
+  shippingCountry: 'US'
 });
 
 
@@ -53,7 +55,7 @@ describe('Virtual merchant service', function () {
         creditCardNumber: testcc,
         expirationYear: '2017',
         expirationMonth: '01',
-        cvv: '666'
+        cvv2: '666'
       };
       service.submitTransaction({
         amount: randomAmount()
@@ -107,7 +109,7 @@ describe('Virtual merchant service', function () {
         creditCardNumber: testcc,
         expirationYear: '2017',
         expirationMonth: '01',
-        cvv: '666'
+        cvv2: '666'
       };
       service.authorizeTransaction({amount: randomAmount()}, cc, prospect).then(function (transaction) {
         assert(transaction.transactionId, 'transactionId should be defined');
@@ -123,7 +125,7 @@ describe('Virtual merchant service', function () {
         creditCardNumber: 234234,
         expirationMonth: 2016,
         expirationYear: 10,
-        cvv: 666
+        cvv2: 666
       };
 
       service.authorizeTransaction({amount: randomAmount()}, cc, prospect).then(function () {
@@ -136,14 +138,14 @@ describe('Virtual merchant service', function () {
     });
   });
 
-  describe('settle a transaction', function () {
+  xdescribe('settle a transaction', function () {
 
     it('should settle a transaction', function (done) {
       var cc = {
         creditCardNumber: testcc,
         expirationYear: '2017',
         expirationMonth: '01',
-        cvv: '666'
+        cvv2: '666'
       };
 
       var txnId;
@@ -204,7 +206,7 @@ describe('Virtual merchant service', function () {
           creditCardNumber: 234234,
           expirationMonth: 2016,
           expirationYear: 10,
-          cvv: 666
+          cvv2: 666
         };
 
         service.submitTransaction({amount: randomAmount()}, cc, prospect).then(function () {
@@ -221,7 +223,7 @@ describe('Virtual merchant service', function () {
           creditCardNumber: 5000300020003003,
           expirationMonth: 2016,
           expirationYear: 10,
-          cvv: 666
+          cvv2: 666
         };
 
         service.submitTransaction({amount: randomAmount()}, cc, prospect).then(function () {
@@ -284,7 +286,7 @@ describe('Virtual merchant service', function () {
         creditCardNumber: testcc,
         expirationYear: '2017',
         expirationMonth: '01',
-        cvv: '666'
+        cvv2: '666'
       };
 
       var transId;
@@ -315,7 +317,7 @@ describe('Virtual merchant service', function () {
     });
   });
 
-  describe('create customer profile', function () {
+  xdescribe('create customer profile', function () {
 
     it('should create a customer profile', function (done) {
 
@@ -323,7 +325,7 @@ describe('Virtual merchant service', function () {
         .withCreditCardNumber('4111111111111111')
         .withExpirationMonth('12')
         .withExpirationYear('2017')
-        .withCvv('123');
+        .withCvv2('123');
 
       service.createCustomerProfile(cc, prospect)
         .then(function (result) {
@@ -341,7 +343,7 @@ describe('Virtual merchant service', function () {
         .withCreditCardNumber('41111')
         .withExpirationMonth('12')
         .withExpirationYear('2010')
-        .withCvv('123');
+        .withCvv2('123');
 
       var billing = {
         customerFirstName: 'bob',
@@ -360,7 +362,7 @@ describe('Virtual merchant service', function () {
     });
   });
 
-  describe('charge customer profile', function () {
+  xdescribe('charge customer profile', function () {
 
     it('should charge a existing customer', function (done) {
 
@@ -371,7 +373,7 @@ describe('Virtual merchant service', function () {
         .withCreditCardNumber('4111111111111111')
         .withExpirationMonth('12')
         .withExpirationYear('2017')
-        .withCvv('123');
+        .withCvv2('123');
 
       prospect.customerEmail = 'something@else.fr';
       service.createCustomerProfile(cc, prospect)
@@ -416,7 +418,7 @@ describe('Virtual merchant service', function () {
             creditCardNumber: testcc,
             expirationYear: '2017',
             expirationMonth: '01',
-            cvv: '666'
+            cvv2: '666'
           };
           var expected = expectedResponse.replace(/_/g, ' ');
           service.submitTransaction({
