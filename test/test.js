@@ -269,7 +269,6 @@ describe('VirtualMerchant SDK', function () {
           .then(function (result) {
             throw new Error('it should not get here');
           }, function (err) {
-            console.log(err);
             assert(err._original, '_original should be defined');
             assert.equal(err.message, 'The Credit Card Number supplied in the authorization request appears to be invalid.');
             done();
