@@ -103,7 +103,7 @@ describe('VirtualMerchant SDK', function () {
       });
     });
 
-    xit('should get batch statistics', function (done) {
+    it('should get batch statistics', function (done) {
       service.getSettledBatchList(new Date(Date.now() - 1000 * 3600 * 24 * 7))
         .then(function (result) {
           done();
@@ -113,7 +113,7 @@ describe('VirtualMerchant SDK', function () {
         });
     });
 
-    xit('should refund a transaction', function (done) {
+    it('should refund a transaction', function (done) {
 
       service.getSettledBatchList(new Date(Date.now() - 1000 * 3600 * 24 * 7))
         .then(function (result) {
@@ -161,7 +161,7 @@ describe('VirtualMerchant SDK', function () {
         });
     });
 
-    xit('should charge a existing customer', function (done) {
+    it('should charge a existing customer', function (done) {
       var random = Math.floor(Math.random() * 1000);
       prospect.customerEmail = 'something@else.fr';
       service.createCustomerProfile(creditCard, prospect)
@@ -264,11 +264,12 @@ describe('VirtualMerchant SDK', function () {
           });
       });
 
-      xit('createCustomerProfile', function (done) {
-        service.createCustomerProfile(creditCard, prospect)
+      it('createCustomerProfile', function (done) {
+        service.createCustomerProfile({}, prospect)
           .then(function (result) {
             throw new Error('it should not get here');
           }, function (err) {
+            console.log(err);
             assert(err._original, '_original should be defined');
             assert.equal(err.message, 'The Credit Card Number supplied in the authorization request appears to be invalid.');
             done();
