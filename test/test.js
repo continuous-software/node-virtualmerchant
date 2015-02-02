@@ -86,7 +86,7 @@ describe('VirtualMerchant SDK', function () {
       });
     });
 
-    xit('should settle a transaction', function (done) {
+    it('should settle a transaction', function (done) {
       var transactionId;
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
@@ -94,8 +94,7 @@ describe('VirtualMerchant SDK', function () {
         transactionId = transaction.transactionId;
         assert(transaction.transactionId, 'transactionId should be defined');
         assert(transaction._original, 'original should be defined');
-      }).then(function () {
-        return service.settleTransaction(transactionId);
+        return service.settleTransaction(transactionId, prospect);
       }).then(function (res) {
         assert.equal(res.transactionId, transactionId);
         done();
@@ -104,7 +103,7 @@ describe('VirtualMerchant SDK', function () {
       });
     });
 
-    it('should get batch statistics', function (done) {
+    xit('should get batch statistics', function (done) {
       service.getSettledBatchList(new Date(Date.now() - 1000 * 3600 * 24 * 7))
         .then(function (result) {
           done();
@@ -114,7 +113,7 @@ describe('VirtualMerchant SDK', function () {
         });
     });
 
-    it('should refund a transaction', function (done) {
+    xit('should refund a transaction', function (done) {
 
       service.getSettledBatchList(new Date(Date.now() - 1000 * 3600 * 24 * 7))
         .then(function (result) {
@@ -150,7 +149,7 @@ describe('VirtualMerchant SDK', function () {
       });
     });
 
-    xit('should create a customer profile', function (done) {
+    it('should create a customer profile', function (done) {
       service.createCustomerProfile(creditCard, prospect)
         .then(function (result) {
           assert(result.profileId, ' profileId Should be defined');
