@@ -32,17 +32,23 @@ var prospect = new Prospect()
       .withShippingPostalCode('3212')
       .withShippingCountry(casual.country_code);
 
-var creditCard = new CreditCard()
-      .withCreditCardNumber('4111111111111111')
-      .withExpirationMonth('12')
-      .withExpirationYear('2017')
-      .withCvv2('123');
-
-var forbiddenCreditCard = new CreditCard()
-      .withCreditCardNumber('5000300020003003')
-      .withExpirationMonth('12')
-      .withExpirationYear('2017')
-      .withCvv2('123');
+var creditCards = {
+  visa: new CreditCard()
+    .withCreditCardNumber('4111111111111111')
+    .withExpirationMonth('12')
+    .withExpirationYear('2017')
+    .withCvv2('123'),
+  mastercard: new CreditCard()
+    .withCreditCardNumber(casual.card_number('MasterCard'))
+    .withExpirationMonth('12')
+    .withExpirationYear('2017')
+    .withCvv2('123'),
+  forbidden: new CreditCard()
+    .withCreditCardNumber('5000300020003003')
+    .withExpirationMonth('12')
+    .withExpirationYear('2017')
+    .withCvv2('123')
+};
 
 var defaultExpectedServiceError = 'DECLINED';
 
@@ -64,7 +70,7 @@ describe('VirtualMerchant SDK', function () {
     it('should submit a transaction', function (done) {
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-      }, creditCard, prospect, extraPaymentFields).then(function (transaction) {
+      }, creditCards.visa, prospect, extraPaymentFields).then(function (transaction) {
         assert(transaction.transactionId, 'transactionId should be defined');
         assert(transaction._original, 'original should be defined');
         done();
@@ -77,7 +83,7 @@ describe('VirtualMerchant SDK', function () {
 
       service.authorizeTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-      }, creditCard, prospect).then(function (transaction) {
+      }, creditCards.visa, prospect).then(function (transaction) {
         assert(transaction.transactionId, 'transactionId should be defined');
         assert(transaction._original, 'original should be defined');
         done();
@@ -90,7 +96,7 @@ describe('VirtualMerchant SDK', function () {
       var transactionId;
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-      }, creditCard, prospect, extraPaymentFields).then(function (transaction) {
+      }, creditCards.visa, prospect, extraPaymentFields).then(function (transaction) {
         transactionId = transaction.transactionId;
         assert(transaction.transactionId, 'transactionId should be defined');
         assert(transaction._original, 'original should be defined');
@@ -139,7 +145,7 @@ describe('VirtualMerchant SDK', function () {
     it('should void a transaction', function (done) {
       service.submitTransaction({
         amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-      }, creditCard, prospect, extraPaymentFields).then(function (transaction) {
+      }, creditCards.visa, prospect, extraPaymentFields).then(function (transaction) {
         return service.voidTransaction(transaction.transactionId, prospect);
       }).then(function (result) {
         assert(result._original, '_original should be defined');
@@ -150,7 +156,7 @@ describe('VirtualMerchant SDK', function () {
     });
 
     it('should create a customer profile', function (done) {
-      service.createCustomerProfile(creditCard, prospect)
+      service.createCustomerProfile(creditCards.visa, prospect)
         .then(function (result) {
           assert(result.profileId, ' profileId Should be defined');
           assert(result._original, '_original should be defined');
@@ -164,7 +170,7 @@ describe('VirtualMerchant SDK', function () {
     it('should charge a existing customer', function (done) {
       var random = Math.floor(Math.random() * 1000);
       prospect.customerEmail = 'something@else.fr';
-      service.createCustomerProfile(creditCard, prospect)
+      service.createCustomerProfile(creditCards.visa, prospect)
         .then(function (result) {
           assert(result.profileId, ' profileId Should be defined');
           assert(result._original, '_original should be defined');
@@ -191,8 +197,8 @@ describe('VirtualMerchant SDK', function () {
 
       it('submitTransaction transaction using credit card 5000300020003003', function (done) {
         service.submitTransaction({
-          amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', 'APPROVAL')
-        }, forbiddenCreditCard, prospect, extraPaymentFields).then(function () {
+          amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'mastercard', 'APPROVAL')
+        }, creditCards.forbidden, prospect, extraPaymentFields).then(function () {
           throw new Error('should not get here');
         }, function (rejection) {
           assert.equal(rejection, 'usage of this card has been restricted due to its undocumented behavior');
@@ -207,7 +213,7 @@ describe('VirtualMerchant SDK', function () {
       it('rejected submitTransaction', function (done) {
         service.submitTransaction({
           amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', defaultExpectedServiceError)
-        }, creditCard, prospect, extraPaymentFields).then(function () {
+        }, creditCards.visa, prospect, extraPaymentFields).then(function () {
           throw new Error('should not get here');
         }, function (rejection) {
           assert.equal(rejection.message, defaultExpectedServiceError);
@@ -219,7 +225,7 @@ describe('VirtualMerchant SDK', function () {
       it('authorizeTransaction', function (done) {
         service.authorizeTransaction({
           amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', defaultExpectedServiceError)
-        }, creditCard, prospect).then(function () {
+        }, creditCards.visa, prospect).then(function () {
           throw new Error('should not get here');
         }, function (rejection) {
           assert.equal(rejection.message, defaultExpectedServiceError);
@@ -293,26 +299,30 @@ describe('VirtualMerchant SDK', function () {
 
   });
 
-  describe('Test Service', function () {
+  describe.only('Test Service', function () {
 
-    describe('with VISA credit card', function () {
+    Object.keys(TestGatewayHelper.responses).forEach(function (network) {
 
-      Object.keys(TestGatewayHelper.responses.visa).forEach(function (expectedResponse) {
-        it('returns ' + expectedResponse, function (done) {
-          var expected = expectedResponse.replace(/_/g, ' ');
-          service.submitTransaction({
-            amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), 'visa', expectedResponse)
-          }, creditCard, prospect, extraPaymentFields).then(function (transaction) {
-            assert(transaction.transactionId, 'transactionId should be defined');
-            assert(transaction._original, 'original should be defined');
-            assert((transaction._original.ssl_result_message === expected), 'should get ' + expected);
-            done();
-          }, function (transaction) {
-            assert(transaction._original, 'original should be defined');
-            assert((transaction._original.ssl_result_message === expected), 'should get ' + expected);
-            done();
+      describe('with ' + network.toUpperCase() + ' credit card', function () {
+
+        Object.keys(TestGatewayHelper.responses[network]).forEach(function (expectedResponse) {
+          it('returns ' + expectedResponse, function (done) {
+            var expected = expectedResponse.replace(/_/g, ' ');
+            service.submitTransaction({
+              amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), network, expectedResponse)
+            }, creditCards[network], prospect, extraPaymentFields).then(function (transaction) {
+              assert(transaction.transactionId, 'transactionId should be defined');
+              assert(transaction._original, 'original should be defined');
+              assert((transaction._original.ssl_result_message === expected), 'should get ' + expected);
+              done();
+            }, function (transaction) {
+              assert(transaction._original, 'original should be defined');
+              assert((transaction._original.ssl_result_message === expected), 'should get ' + expected);
+              done();
+            });
           });
         });
+
       });
 
     });
