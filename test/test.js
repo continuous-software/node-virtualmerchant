@@ -43,6 +43,16 @@ var creditCards = {
     .withExpirationMonth('12')
     .withExpirationYear('2017')
     .withCvv2('123'),
+  amex: new CreditCard()
+    .withCreditCardNumber(casual.card_number('American Express'))
+    .withExpirationMonth('12')
+    .withExpirationYear('2017')
+    .withCvv2('123'),
+  discover: new CreditCard()
+    .withCreditCardNumber(casual.card_number('Discover Card'))
+    .withExpirationMonth('12')
+    .withExpirationYear('2017')
+    .withCvv2('123'),
   forbidden: new CreditCard()
     .withCreditCardNumber('5000300020003003')
     .withExpirationMonth('12')
@@ -330,5 +340,3 @@ describe('VirtualMerchant SDK', function () {
   });
 
 });
-
-
