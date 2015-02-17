@@ -309,7 +309,7 @@ describe('VirtualMerchant SDK', function () {
 
   });
 
-  describe.only('Test Service', function () {
+  xdescribe('Test Service', function () {
 
     Object.keys(TestGatewayHelper.responses).forEach(function (network) {
 
