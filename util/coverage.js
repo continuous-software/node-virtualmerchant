@@ -1,6 +1,6 @@
 'use strict';
 
-var testGatewayResponses = require('./TestGatewayResponses.js');
+var testGatewayResponses = require('../lib/TestGatewayResponses.js');
 
 Object.keys(testGatewayResponses).forEach(function (network) {
   console.log(network + ':');
