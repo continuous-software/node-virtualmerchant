@@ -2,7 +2,7 @@
   "author": "Laurent Renard <laurent@continuous.in.th>",
   "name": "virtualmerchant",
   "description": "SDK for VirtualMerchant payment gateway.",
-  "version": "1.1.2",
+  "version": "1.1.8",
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV='test' node ./node_modules/.bin/mocha ./test/ -R spec -t 35000"
@@ -22,9 +22,9 @@
     "42-cent-base": "^0.9.0",
     "42-cent-util": "^1.0.0",
     "bluebird": "^2.3.2",
-    "json2xml": "^0.1.1",
-    "request": "^2.47.0",
-    "xml2json": "^0.5.1"
+    "object-assign": "^2.0.0",
+    "request": "2.53.0",
+    "xml2js": "^0.4.6"
   },
   "devDependencies": {
     "42-cent-model": "^1.1.1",
