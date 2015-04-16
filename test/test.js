@@ -35,8 +35,8 @@ var prospect = new Prospect()
 var creditCards = {
   visa: new CreditCard()
     .withCreditCardNumber('4111111111111111')
-    .withExpirationMonth('12')
-    .withExpirationYear('2017')
+    .withExpirationMonth('11')
+    .withExpirationYear('2018')
     .withCvv2('123'),
   mastercard: new CreditCard()
     .withCreditCardNumber(casual.card_number('MasterCard'))
@@ -129,19 +129,47 @@ describe('VirtualMerchant SDK', function () {
         });
     });
 
-    it('should refund a transaction', function (done) {
+    it('should refund transaction', function (done) {
 
       service.getSettledBatchList(new Date(Date.now() - 1000 * 3600 * 24 * 7))
         .then(function (result) {
           return result.filter(function (val) {
-            return val.ssl_trans_status === 'STL';
+            return val.ssl_trans_status[0] === 'STL';
           });
         })
         .then(function (settled) {
           if (settled.length === 0) {
             return done();
           }
-          return service.refundTransaction(settled[0].ssl_txn_id, prospect);
+          return service.refundTransaction(settled[0].ssl_txn_id);
+        })
+        .then(function (result) {
+          //something is wrong for with the done('no settled...')
+          if (result) {
+            assert.equal(result._original.ssl_result_message, 'APPROVAL');
+            done();
+          }
+        })
+        .catch(function (err) {
+          done(err);
+        });
+    });
+    it('should support partial refund', function (done) {
+
+      service.getSettledBatchList(new Date(Date.now() - 1000 * 3600 * 24 * 7))
+        .then(function (result) {
+          return result.filter(function (val) {
+            return val.ssl_trans_status[0] === 'STL';
+          });
+        })
+        .then(function (settled) {
+          if (settled.length === 0) {
+            return done();
+          }
+
+          var amount = (settled[0].ssl_amount) * 0.1;
+
+          return service.refundTransaction(settled[0].ssl_txn_id, {amount: amount});
         })
         .then(function (result) {
           //something is wrong for with the done('no settled...')
