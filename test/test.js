@@ -39,17 +39,17 @@ var creditCards = {
     .withExpirationYear('2018')
     .withCvv2('123'),
   mastercard: new CreditCard()
-    .withCreditCardNumber(casual.card_number('MasterCard'))
+    .withCreditCardNumber('5326100352571800')
     .withExpirationMonth('12')
-    .withExpirationYear('2017')
+    .withExpirationYear('2018')
     .withCvv2('123'),
   amex: new CreditCard()
-    .withCreditCardNumber(casual.card_number('American Express'))
+    .withCreditCardNumber('378282246310005')
     .withExpirationMonth('12')
-    .withExpirationYear('2017')
+    .withExpirationYear('2018')
     .withCvv2('123'),
   discover: new CreditCard()
-    .withCreditCardNumber(casual.card_number('Discover Card'))
+    .withCreditCardNumber('6011111111111117')
     .withExpirationMonth('12')
     .withExpirationYear('2017')
     .withCvv2('123'),
@@ -340,34 +340,28 @@ describe('VirtualMerchant SDK', function () {
 
   });
 
-  xdescribe('Test Service', function () {
-
+  describe('Test Service', function () {
     Object.keys(TestGatewayHelper.responses).forEach(function (network) {
-
       describe('with ' + network.toUpperCase() + ' credit card', function () {
-
         Object.keys(TestGatewayHelper.responses[network]).forEach(function (expectedResponse) {
           it('returns ' + expectedResponse, function (done) {
             var expected = expectedResponse.replace(/_/g, ' ');
+            var amount = TestGatewayHelper.adjustAmount(casual.integer(0, 99), network, expectedResponse);
             service.submitTransaction({
-              amount: TestGatewayHelper.adjustAmount(casual.integer(0, 99), network, expectedResponse)
+              amount: amount
             }, creditCards[network], prospect, extraPaymentFields).then(function (transaction) {
               assert(transaction.transactionId, 'transactionId should be defined');
               assert(transaction._original, 'original should be defined');
-              assert((transaction._original.ssl_result_message === expected), 'should get ' + expected);
+              assert((transaction._original.ssl_result_message[0] === expected), 'should get ' + expected);
               done();
             }, function (transaction) {
               assert(transaction._original, 'original should be defined');
-              assert((transaction._original.ssl_result_message === expected), 'should get ' + expected);
+              assert((transaction._original.ssl_result_message[0] === expected), 'should get ' + expected);
               done();
             });
           });
         });
-
       });
-
     });
-
   });
-
 });
