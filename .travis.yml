@@ -1,11 +1,10 @@
 language: node_js
 node_js:
-- '0.10.33'
+- 0.10.33
 before_script:
 - npm install
 script:
 - npm test
 notifications:
-  hipchat:
-    rooms:
-      secure: TH70IKa8gkW91MIIz2z+fuqXv54G4Rozjq5YxjoenRJRPPvHmpn3nf6RAoIRf4iFsqzL1ZsW+cFTvufT9jYT+ThdPRFH28qBJFGlfMR8rRSM8TfBrdoQvexXncQ25HijpJ5+cJYV0b9kfKEXYpeFXk+fztSqoVYU785rJO06klw=
+  slack:
+    secure: kdBgvp7WdKiO+ZtsFaaQIThc6s5fQmV807E+WAif3rtdsEvvDpiLy/izODMd/J1whewEJPYFimrmId6rkL5p5IgVzlA13pxLcPrKhCg8sks2IxuFUloYPaxK8TX52v2aU+wSi5Es97BJOWhd4QkAXjtCHVEwhVFXdibWZnwg+bU=
