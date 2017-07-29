@@ -339,29 +339,4 @@ describe('VirtualMerchant SDK', function () {
     });
 
   });
-
-  describe('Test Service', function () {
-    Object.keys(TestGatewayHelper.responses).forEach(function (network) {
-      describe('with ' + network.toUpperCase() + ' credit card', function () {
-        Object.keys(TestGatewayHelper.responses[network]).forEach(function (expectedResponse) {
-          it('returns ' + expectedResponse, function (done) {
-            var expected = expectedResponse.replace(/_/g, ' ');
-            var amount = TestGatewayHelper.adjustAmount(casual.integer(0, 99), network, expectedResponse);
-            service.submitTransaction({
-              amount: amount
-            }, creditCards[network], prospect, extraPaymentFields).then(function (transaction) {
-              assert(transaction.transactionId, 'transactionId should be defined');
-              assert(transaction._original, 'original should be defined');
-              assert((transaction._original.ssl_result_message[0] === expected), 'should get ' + expected);
-              done();
-            }, function (transaction) {
-              assert(transaction._original, 'original should be defined');
-              assert((transaction._original.ssl_result_message[0] === expected), 'should get ' + expected);
-              done();
-            });
-          });
-        });
-      });
-    });
-  });
 });
