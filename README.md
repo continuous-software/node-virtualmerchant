@@ -4,6 +4,8 @@
 
 ## Installation ##
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/continuous-software/node-virtualmerchant.svg)](https://greenkeeper.io/)
+
     $ npm install -s virtualmerchant
 
 ## Usage
