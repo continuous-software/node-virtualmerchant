@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/continuous-software/node-virtualmerchant.svg?branch=master)](https://travis-ci.org/continuous-software/node-virtualmerchant) [![Greenkeeper badge](https://badges.greenkeeper.io/continuous-software/node-virtualmerchant.svg)](https://greenkeeper.io/)
 
-![node-virtualmerchant](http://s28.postimg.org/f1ptqgfot/logo.png)
+![node-virtualmerchant](https://i0.wp.com/tribulant.com/docs/wp-content/uploads/ConvergeLogo-horizontal1.png?resize=497%2C129)
 
 ## Installation ##
 
